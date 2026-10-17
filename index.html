@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Div (I) College Companion</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#4f46e5">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex justify-center selection:bg-indigo-500 selection:text-white">
+
+  <!-- Mobile Device Shell Frame -->
+  <div class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-2xl relative border-x border-slate-200">
+
+    <!-- Top App Bar & Status Header -->
+    <header class="sticky top-0 z-30 bg-indigo-600 text-white shadow-sm px-4 pt-3 pb-3">
+      <!-- Status row -->
+      <div class="flex justify-between items-center text-[11px] font-medium text-indigo-200 mb-1.5">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="liveClock" class="font-mono text-white text-xs font-semibold">--:--:--</span>
+        </span>
+        <div class="flex items-center gap-2">
+          <span id="liveDate" class="text-[10px] text-indigo-200">Today</span>
+          <span class="bg-indigo-700/80 px-2 py-0.5 rounded text-[10px] text-indigo-100 font-mono">DPGU CSE SEM 1</span>
+        </div>
+      </div>
+
+      <!-- App Title & Batch Selector -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-lg font-extrabold tracking-tight text-white flex items-center gap-1.5">
+            CollegeCompanion
+            <span class="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold">DIV I</span>
+          </h1>
+          <p class="text-[11px] text-indigo-100 font-medium">EES Active • No Physics</p>
+        </div>
+
+        <!-- Batch Toggle Pill Buttons & Hidden Select for sync -->
+        <div class="flex items-center gap-1">
+          <select id="batchSelect" class="sr-only">
+            <option value="I1">Batch I1</option>
+            <option value="I2">Batch I2</option>
+            <option value="I3">Batch I3</option>
+          </select>
+          <div class="flex bg-indigo-800/70 p-0.5 rounded-lg border border-indigo-500/40 text-xs">
+            <button data-batch="I1" class="batch-btn px-2.5 py-1 rounded-md font-bold transition-all bg-white text-indigo-700 shadow-sm">I1</button>
+            <button data-batch="I2" class="batch-btn px-2.5 py-1 rounded-md font-bold transition-all text-indigo-200 hover:text-white">I2</button>
+            <button data-batch="I3" class="batch-btn px-2.5 py-1 rounded-md font-bold transition-all text-indigo-200 hover:text-white">I3</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Mobile Body -->
+    <main class="flex-1 overflow-y-auto no-scrollbar pb-24 px-4 py-4 space-y-4">
+
+      <!-- ================= TAB 1: SCHEDULE ================= -->
+      <section id="tabSchedule" class="tab-content space-y-4">
+        
+        <!-- Day Selector Pill Bar -->
+        <div id="dayButtonsContainer" class="flex gap-1.5 overflow-x-auto no-scrollbar py-1">
+          <button data-day="1" class="day-btn day-chip flex-1 py-2 px-2 rounded-xl text-center text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">Monday</button>
+          <button data-day="2" class="day-btn day-chip flex-1 py-2 px-2 rounded-xl text-center text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">Tuesday</button>
+          <button data-day="3" class="day-btn day-chip flex-1 py-2 px-2 rounded-xl text-center text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">Wednesday</button>
+          <button data-day="4" class="day-btn day-chip flex-1 py-2 px-2 rounded-xl text-center text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">Thursday</button>
+          <button data-day="5" class="day-btn day-chip flex-1 py-2 px-2 rounded-xl text-center text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">Friday</button>
+        </div>
+
+        <!-- Active Day Header -->
+        <div class="flex items-center justify-between pt-1">
+          <div class="flex items-center gap-2">
+            <h2 id="currentViewingDayTitle" class="text-sm font-bold text-slate-800">Monday Schedule</h2>
+            <span id="activeBatchPill" class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">Batch I1</span>
+          </div>
+          <span id="slotCountBadge" class="text-[11px] font-semibold text-slate-500">4 Sessions</span>
+        </div>
+
+        <!-- Schedule Items List -->
+        <div id="scheduleTimeline" class="space-y-2.5">
+          <!-- Dynamically Rendered by JS -->
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 2: ATTENDANCE ================= -->
+      <section id="tabAttendance" class="tab-content hidden space-y-4">
+        
+        <!-- Overall Summary Card -->
+        <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-4 text-white shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[11px] uppercase tracking-wider text-indigo-200 font-bold">Overall Attendance</span>
+            <div class="flex items-baseline gap-2 mt-0.5">
+              <span id="overallAttendancePct" class="text-3xl font-extrabold font-mono">100%</span>
+              <span id="overallAttendanceStatus" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300">Safely Above 75%</span>
+            </div>
+            <p id="overallAttendanceSub" class="text-[11px] text-indigo-100 mt-1">Total: 0 / 0 Classes Attended</p>
+          </div>
+          <button id="resetAttendanceBtn" class="text-xs bg-white/10 hover:bg-white/20 text-white px-2.5 py-1 rounded-lg border border-white/20 transition-colors">
+            Reset
+          </button>
+        </div>
+
+        <!-- Attendance Subject Cards -->
+        <div class="space-y-3" id="attendanceCardsContainer">
+          <!-- Rendered by JS -->
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 3: TASKS & LABS ================= -->
+      <section id="tabTasks" class="tab-content hidden space-y-4">
+        
+        <!-- Header & Quick Counter -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-slate-800">Assignments & Labs</h2>
+            <p class="text-xs text-slate-500">Track C programs, BEEE files & submissions</p>
+          </div>
+          <span id="taskStats" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full font-bold">0 Done</span>
+        </div>
+
+        <!-- Quick Add Form -->
+        <form id="taskForm" class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5">
+          <input type="text" id="taskTitle" placeholder="Add assignment, lab record, or prep item..." class="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+          <div class="flex gap-2">
+            <select id="taskSubject" class="text-xs bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1">
+              <option value="PSP">PSP (C Programming)</option>
+              <option value="LADC">LADC (Mathematics)</option>
+              <option value="BEEE">BEEE (Electrical)</option>
+              <option value="EES">EES</option>
+              <option value="DTP">DTP (Design Lab)</option>
+              <option value="General">General College</option>
+            </select>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-1.5 rounded-xl transition-all shadow-sm">
+              Add
+            </button>
+          </div>
+        </form>
+
+        <!-- Filter tabs -->
+        <div class="flex gap-2 text-xs">
+          <button data-filter="all" class="task-filter-btn px-3 py-1 rounded-lg font-bold bg-indigo-600 text-white">All (<span id="countAll">0</span>)</button>
+          <button data-filter="pending" class="task-filter-btn px-3 py-1 rounded-lg font-bold bg-slate-200 text-slate-700">Pending (<span id="countPending">0</span>)</button>
+          <button data-filter="completed" class="task-filter-btn px-3 py-1 rounded-lg font-bold bg-slate-200 text-slate-700">Done (<span id="countCompleted">0</span>)</button>
+        </div>
+
+        <!-- Task List -->
+        <div id="taskList" class="space-y-2 max-h-96 overflow-y-auto no-scrollbar">
+          <!-- Rendered by JS -->
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 4: SYLLABUS ================= -->
+      <section id="tabSyllabus" class="tab-content hidden space-y-4">
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-slate-800">Syllabus Tracker</h2>
+            <p class="text-xs text-slate-500">DPGU Sem 1 Division I Official Syllabus</p>
+          </div>
+          <span id="syllabusProgressBadge" class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-full font-bold">0% Covered</span>
+        </div>
+
+        <!-- Subject Switcher -->
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-1" id="syllabusSubjectPills">
+          <button data-sub="LADC" class="syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white whitespace-nowrap shadow-sm">LADC</button>
+          <button data-sub="PSP" class="syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">PSP (C)</button>
+          <button data-sub="BEEE" class="syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">BEEE</button>
+          <button data-sub="EES" class="syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">EES</button>
+          <button data-sub="DTP" class="syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">DTP</button>
+        </div>
+
+        <!-- Subject Detail Container -->
+        <div id="syllabusContent" class="space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+
+      </section>
+
+      <!-- ================= TAB 5: PROFILE ================= -->
+      <section id="tabProfile" class="tab-content hidden space-y-4">
+        
+        <!-- Profile Header -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center font-extrabold text-base">
+            CSE
+          </div>
+          <div class="flex-1">
+            <h3 class="font-bold text-slate-800 text-sm">B.Tech First Year Student</h3>
+            <p class="text-xs text-slate-500">School of Technology & Research, Pune</p>
+            <div class="flex gap-1.5 mt-1.5">
+              <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded">Division I</span>
+              <span id="profileBatchDisplay" class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">Batch I1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Configuration Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 text-xs">
+          <h4 class="font-bold text-slate-800 text-sm border-b border-slate-100 pb-2">Academic Settings</h4>
+          
+          <div class="flex justify-between items-center py-1">
+            <span class="text-slate-600">Chemistry Status:</span>
+            <span class="font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">Replaced with EES</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-slate-600">Physics Status:</span>
+            <span class="font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Not Active This Sem</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-slate-600">Attendance Target:</span>
+            <span class="font-bold text-emerald-700 font-mono">75% Mandatory</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-slate-600">Weekly Contact Hours:</span>
+            <span class="font-bold text-slate-700 font-mono">29 Hrs / 22 Credits</span>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="space-y-2">
+          <button id="seedPresetTasksBtn" class="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl border border-indigo-200 transition-colors flex items-center justify-center gap-2">
+            Load Official Syllabus Lab Experiments
+          </button>
+          <button id="clearAllDataBtn" class="w-full py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl border border-red-200 transition-colors flex items-center justify-center gap-2">
+            Reset All Saved Data
+          </button>
+        </div>
+
+        <!-- App Info -->
+        <div class="text-center pt-2 text-[11px] text-slate-400">
+          <div>Div (I) Personal College Companion v2.0</div>
+          <div>All data stored locally on your device</div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (Fixed Native App Style) -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 px-2 py-1.5 z-40 flex justify-around shadow-lg">
+      <button data-target="tabSchedule" class="nav-item active flex flex-col items-center py-1 px-2 text-indigo-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Schedule</span>
+      </button>
+
+      <button data-target="tabAttendance" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Attendance</span>
+      </button>
+
+      <button data-target="tabTasks" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Tasks</span>
+      </button>
+
+      <button data-target="tabSyllabus" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Syllabus</span>
+      </button>
+
+      <button data-target="tabProfile" class="nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Profile</span>
+      </button>
+    </nav>
+
+    <!-- In-App Floating Toast Notification -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white px-4 py-2 rounded-full text-xs font-semibold shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-1.5">
+      <span id="toastIcon">✨</span>
+      <span id="toastMsg">Action Done</span>
+    </div>
+
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // ================= DATA STORES =================
+    
+    // 1. Division I Timetable
+    const divisionITimetable = {
+      1: {
+        name: "Monday",
+        classes: [
+          { time: "8:45 - 9:30 AM", code: "BEEE", title: "Basic Electrical & Electronics", type: "Lecture", room: "Room 401", teacher: "Prof. CD", color: "amber" },
+          { time: "9:30 - 10:15 AM", code: "PSP", title: "Problem Solving through Programming", type: "Lecture", room: "Room 401", teacher: "Prof. AJ", color: "emerald" },
+          { time: "10:15 - 10:30 AM", code: "BREAK", title: "Short Break", type: "Break", room: "Campus", teacher: "-", color: "slate" },
+          { time: "10:30 - 11:15 AM", code: "LADC", title: "Linear Algebra & Diff Calculus", type: "Lecture", room: "Room 204", teacher: "Prof. PRR", color: "blue" },
+          { time: "11:15 - 12:00 PM", code: "EES", title: "Environmental & Energy Studies", type: "Lecture", room: "Room 204", teacher: "Prof. PC", color: "purple" },
+          { time: "12:00 - 1:00 PM", code: "LUNCH", title: "Lunch Break", type: "Break", room: "Cafeteria", teacher: "-", color: "slate" }
+        ]
+      },
+      2: {
+        name: "Tuesday",
+        classes: [
+          {
+            time: "8:45 - 10:15 AM",
+            isLabGroup: true,
+            batches: {
+              I1: { code: "PSPL", title: "Problem Solving Lab (C)", room: "PL II", teacher: "Prof. AJ", color: "emerald" },
+              I2: { code: "PSPL", title: "Problem Solving Lab (C)", room: "PL II", teacher: "Prof. AJ", color: "emerald" },
+              I3: { code: "DTPL", title: "Design Thinking Lab", room: "PL III", teacher: "Prof. SD", color: "orange" }
+            }
+          },
+          { time: "10:15 - 10:30 AM", code: "BREAK", title: "Short Break", type: "Break", room: "Campus", teacher: "-", color: "slate" },
+          { time: "10:30 - 11:15 AM", code: "DTP", title: "Design Thinking & Prototyping", type: "Lecture", room: "Room 201", teacher: "Prof. Pallavi J", color: "orange" },
+          { time: "11:15 - 12:00 PM", code: "LADC", title: "Linear Algebra & Diff Calculus", type: "Lecture", room: "Room 201", teacher: "Prof. PRR", color: "blue" },
+          { time: "12:00 - 1:00 PM", code: "LUNCH", title: "Lunch Break", type: "Break", room: "Cafeteria", teacher: "-", color: "slate" }
+        ]
+      },
+      3: {
+        name: "Wednesday",
+        classes: [
+          { time: "8:45 - 9:30 AM", code: "BEEE", title: "Basic Electrical & Electronics", type: "Lecture", room: "Room 306", teacher: "Prof. CD", color: "amber" },
+          { time: "9:30 - 10:15 AM", code: "EES", title: "Environmental & Energy Studies", type: "Lecture", room: "Room 306", teacher: "Prof. PC", color: "purple" },
+          { time: "10:15 - 10:30 AM", code: "BREAK", title: "Short Break", type: "Break", room: "Campus", teacher: "-", color: "slate" },
+          {
+            time: "10:30 - 12:00 PM",
+            isLabGroup: true,
+            batches: {
+              I1: { code: "BEEEL", title: "BEEE Laboratory", room: "QNX Lab", teacher: "Prof. CD", color: "amber" },
+              I2: { code: "DTPL", title: "Design Thinking Lab", room: "PL III", teacher: "Prof. SD", color: "orange" },
+              I3: { code: "STUDY", title: "Self Study / Library Slot", room: "Library", teacher: "-", color: "slate" }
+            }
+          },
+          { time: "12:00 - 1:00 PM", code: "LUNCH", title: "Lunch Break", type: "Break", room: "Cafeteria", teacher: "-", color: "slate" }
+        ]
+      },
+      4: {
+        name: "Thursday",
+        classes: [
+          { time: "8:45 - 9:30 AM", code: "LADC", title: "Linear Algebra Tutorial", type: "Tutorial", room: "Room 301", teacher: "Prof. Prakash T", color: "blue" },
+          { time: "9:30 - 10:15 AM", code: "BEEE", title: "Basic Electrical & Electronics", type: "Lecture", room: "Room 301", teacher: "Prof. CD", color: "amber" },
+          { time: "10:15 - 10:30 AM", code: "BREAK", title: "Short Break", type: "Break", room: "Campus", teacher: "-", color: "slate" },
+          {
+            time: "10:30 - 12:00 PM",
+            isLabGroup: true,
+            batches: {
+              I1: { code: "DTPL", title: "Design Thinking Lab", room: "PL III", teacher: "Prof. PS", color: "orange" },
+              I2: { code: "STUDY", title: "Self Study / Library Slot", room: "Library", teacher: "-", color: "slate" },
+              I3: { code: "PSPL", title: "Problem Solving Lab (C)", room: "PL II", teacher: "Prof. AJ", color: "emerald" }
+            }
+          },
+          { time: "12:00 - 1:00 PM", code: "LUNCH", title: "Lunch Break", type: "Break", room: "Cafeteria", teacher: "-", color: "slate" },
+          { time: "1:00 - 1:45 PM", code: "PSP", title: "Problem Solving through Programming", type: "Lecture", room: "Room 201", teacher: "Prof. AJ", color: "emerald" }
+        ]
+      },
+      5: {
+        name: "Friday",
+        classes: [
+          { time: "8:45 - 9:30 AM", code: "PSP", title: "Problem Solving through Programming", type: "Lecture", room: "Room 306", teacher: "Prof. AJ", color: "emerald" },
+          { time: "9:30 - 10:15 AM", code: "LADC", title: "Linear Algebra & Diff Calculus", type: "Lecture", room: "Room 306", teacher: "Prof. PRR", color: "blue" },
+          { time: "10:15 - 10:30 AM", code: "BREAK", title: "Short Break", type: "Break", room: "Campus", teacher: "-", color: "slate" },
+          {
+            time: "10:30 - 12:00 PM",
+            isLabGroup: true,
+            batches: {
+              I1: { code: "STUDY", title: "Self Study / Library Slot", room: "Library", teacher: "-", color: "slate" },
+              I2: { code: "BEEEL", title: "BEEE Laboratory", room: "PL I", teacher: "Prof. Priti R", color: "amber" },
+              I3: { code: "BEEEL", title: "BEEE Laboratory", room: "QNX Lab", teacher: "Prof. CD", color: "amber" }
+            }
+          },
+          { time: "12:00 - 1:00 PM", code: "LUNCH", title: "Lunch Break", type: "Break", room: "Cafeteria", teacher: "-", color: "slate" }
+        ]
+      }
+    };
+
+    // 2. Syllabus Database from official document
+    const syllabusDatabase = {
+      LADC: {
+        name: "Linear Algebra and Differential Calculus",
+        code: "DP04020325101",
+        credits: "4 Credits (CA: 60 | TEA: 40)",
+        units: [
+          { id: "ladc_u1", title: "Unit 1: Matrices & System of Linear Equations", desc: "Rank of matrix, linear dependence & independence, traffic network modeling, quantum gates." },
+          { id: "ladc_u2", title: "Unit 2: Eigen Values, Eigen Vectors & Diagonalization", desc: "Cayley-Hamilton theorem, quadratic forms canonical reduction, graphics image transformation." },
+          { id: "ladc_u3", title: "Unit 3: Single Variable Calculus", desc: "Rolle's & Mean Value theorems, Taylor & Maclaurin series, L'Hôpital's rule, JPEG compression." },
+          { id: "ladc_u4", title: "Unit 4: Curve Tracing", desc: "Tangents, inflection points, asymptotes, Cartesian and polar curves (Rose curves, Cardioid)." },
+          { id: "ladc_u5", title: "Unit 5: Multivariable Calculus (Partial Differentiation)", desc: "Chain rule, change of variables, Euler's theorem on homogeneous functions, gradient calc." },
+          { id: "ladc_u6", title: "Unit 6: Applications of Partial Differentiation", desc: "Jacobian matrices, error approximations, Maxima and Minima, Lagrange's undetermined multipliers." }
+        ]
+      },
+      PSP: {
+        name: "Problem Solving through Programming (C)",
+        code: "DP04020325106",
+        credits: "3+1 Credits (Theory: 75 | Practical: 25)",
+        units: [
+          { id: "psp_u1", title: "Unit 1: Problem Solving & C Fundamentals", desc: "Algorithms, flowcharts, compilation stages, data types, operators & expressions." },
+          { id: "psp_u2", title: "Unit 2: Control Structures & Loops", desc: "if-else ladder, switch-case, for/while/do-while loops, nested loops, break & continue." },
+          { id: "psp_u3", title: "Unit 3: Arrays & Strings", desc: "1D & 2D arrays, matrix operations, searching (linear/binary), bubble sort, string manipulation." },
+          { id: "psp_u4", title: "Unit 4: Functions & Pointers", desc: "Call by value/reference, recursion, pointer arithmetic, dynamic memory (malloc, calloc, free)." },
+          { id: "psp_u5", title: "Unit 5: Structures & Unions", desc: "Arrays of structures, nested structures, bit fields, memory trade-offs with unions." },
+          { id: "psp_u6", title: "Unit 6: File Handling in C", desc: "File modes, fopen/fclose, fprintf/fscanf, binary record I/O, random access with fseek." }
+        ]
+      },
+      BEEE: {
+        name: "Basic Electrical & Electronics Engineering",
+        code: "DP04020325104",
+        credits: "3+1 Credits (Theory: 75 | Lab: 25)",
+        units: [
+          { id: "beee_u1", title: "Unit 1: Circuits & Network Theorems", desc: "Ohm's & Kirchhoff's laws (KVL/KCL), Thevenin's & Superposition theorems, AC phasors & RMS." },
+          { id: "beee_u2", title: "Unit 2: Machines & Transformers", desc: "DC machines operating principle, AC alternators, induction motors, transformer EMF equation." },
+          { id: "beee_u3", title: "Unit 3: Semiconductor Devices", desc: "PN junction diode, Zener diode regulator, LEDs, BJT characteristics, MOSFET basics." },
+          { id: "beee_u4", title: "Unit 4: Analog & Digital Electronics", desc: "Half & full-wave rectifiers, BJT CE/CB amplifiers, logic gates, Boolean algebra." },
+          { id: "beee_u5", title: "Unit 5: Measuring Instruments & Sensors", desc: "CRO waveform visualization, DMM, LVDT displacement, RTD & thermocouples." },
+          { id: "beee_u6", title: "Unit 6: Communication & Emerging Tech", desc: "Transmitter/receiver channels, GSM architecture, 5G features and IoT use cases." }
+        ]
+      },
+      EES: {
+        name: "Environmental & Energy Studies",
+        code: "DP04020325103-MOD",
+        credits: "3 Credits (CA: 45 | TEA: 30)",
+        units: [
+          { id: "ees_u1", title: "Unit 1: Ecosystems & Natural Resources", desc: "Ecosystem structure, renewable vs non-renewable energy sources, conservation methods." },
+          { id: "ees_u2", title: "Unit 2: Energy Storage & Battery Tech", desc: "Hydrogen as clean fuel, CNG, Li-ion batteries construction, EV power applications." },
+          { id: "ees_u3", title: "Unit 3: Environmental Pollution & Controls", desc: "Air, water and industrial pollution control, effluent treatments, green chemistry principles." },
+          { id: "ees_u4", title: "Unit 4: Sustainable Energy & Solar Tech", desc: "Photovoltaic cells, solar thermal systems, wind and biomass generation." },
+          { id: "ees_u5", title: "Unit 5: Solid Waste & E-Waste Management", desc: "Electronic waste hazards in computing, recycling frameworks, hazardous material safety." },
+          { id: "ees_u6", title: "Unit 6: Environmental Legislation & ISO", desc: "Environmental protection acts, carbon footprint calculation, green campus audit protocols." }
+        ]
+      },
+      DTP: {
+        name: "Design Thinking and Prototyping",
+        code: "DP04020325109",
+        credits: "2 Credits (Continuous Practical: 50)",
+        units: [
+          { id: "dtp_m1", title: "Module 1-3: Empathy & User Research", desc: "Human-centric design, field observation, user interviews, Empathy mapping (Think/Feel/Say/Do)." },
+          { id: "dtp_m2", title: "Module 4-5: Define & Ideation Frameworks", desc: "5 Whys, Point of View (POV) statements, How Might We (HMW) questions, DVF evaluation matrix." },
+          { id: "dtp_m3", title: "Module 6-7: Low-Fidelity Prototyping", desc: "Paper prototyping, wireframes, physical cardboard/clay models, rapid feedback collection." },
+          { id: "dtp_m4", title: "Module 8-9: Digital Prototyping & User Testing", desc: "Mid-fidelity Figma/Balsamiq screens, usability testing sheets, iterative refinement." }
+        ]
+      }
+    };
+
+    const defaultPresetTasks = [
+      { id: 101, title: "C Lab 1: Basic arithmetic & salary calculation", subject: "PSP", completed: true },
+      { id: 102, title: "C Lab 2: Control structures (even/odd, roots, switch)", subject: "PSP", completed: true },
+      { id: 103, title: "C Lab 3: Arrays & Matrix multiplication", subject: "PSP", completed: false },
+      { id: 104, title: "BEEE Lab Exp 1: Verification of Ohm's & KVL/KCL", subject: "BEEE", completed: true },
+      { id: 105, title: "BEEE Lab Exp 2: Superposition & Thevenin theorem", subject: "BEEE", completed: false },
+      { id: 106, title: "DTP Assignment 3: Empathy Map & User Persona creation", subject: "DTP", completed: false },
+      { id: 107, title: "LADC Tutorial 1: Matrix rank & echelon form problems", subject: "LADC", completed: false },
+      { id: 108, title: "EES Review: Energy storage & Li-Ion battery report", subject: "EES", completed: false }
+    ];
+
+    // ================= STATE =================
+    let currentActiveTab = "tabSchedule";
+    let activeDay = 1;
+    let activeBatch = "I1";
+    let attendanceData = {};
+    let taskList = [];
+    let syllabusChecklist = {};
+    let activeSyllabusSub = "LADC";
+    let taskFilter = "all";
+
+    // ================= STORAGE =================
+    function initAppData() {
+      try {
+        const savedBatch = localStorage.getItem("div_i_batch");
+        if (savedBatch && ["I1", "I2", "I3"].includes(savedBatch)) {
+          activeBatch = savedBatch;
+        }
+      } catch (e) {}
+
+      const defaultAttendance = {
+        LADC: { attended: 14, total: 15 },
+        PSP:  { attended: 12, total: 14 },
+        BEEE: { attended: 13, total: 15 },
+        EES:  { attended: 9,  total: 10 },
+        DTP:  { attended: 6,  total: 6 }
+      };
+      try {
+        const savedAtt = localStorage.getItem("div_i_attendance");
+        attendanceData = savedAtt ? JSON.parse(savedAtt) : defaultAttendance;
+      } catch (e) {
+        attendanceData = defaultAttendance;
+      }
+
+      try {
+        const savedTasks = localStorage.getItem("div_i_tasks");
+        taskList = savedTasks ? JSON.parse(savedTasks) : defaultPresetTasks;
+      } catch (e) {
+        taskList = defaultPresetTasks;
+      }
+
+      try {
+        const savedSyl = localStorage.getItem("div_i_syl_checks");
+        syllabusChecklist = savedSyl ? JSON.parse(savedSyl) : {
+          "ladc_u1": true,
+          "psp_u1": true,
+          "psp_u2": true,
+          "beee_u1": true,
+          "dtp_m1": true
+        };
+      } catch (e) {
+        syllabusChecklist = {};
+      }
+
+      const curWeekday = new Date().getDay();
+      activeDay = (curWeekday >= 1 && curWeekday <= 5) ? curWeekday : 1;
+    }
+
+    function saveAttendance() {
+      try { localStorage.setItem("div_i_attendance", JSON.stringify(attendanceData)); } catch (e) {}
+    }
+
+    function saveTasks() {
+      try { localStorage.setItem("div_i_tasks", JSON.stringify(taskList)); } catch (e) {}
+    }
+
+    function saveSyllabus() {
+      try { localStorage.setItem("div_i_syl_checks", JSON.stringify(syllabusChecklist)); } catch (e) {}
+    }
+
+    function saveBatch(batch) {
+      activeBatch = batch;
+      try { localStorage.setItem("div_i_batch", batch); } catch (e) {}
+    }
+
+    // ================= TOAST SYSTEM =================
+    function showAppToast(message, icon = "✨") {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMsg").textContent = message;
+      document.getElementById("toastIcon").textContent = icon;
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 1800);
+    }
+
+    // ================= CLOCK =================
+    function refreshClock() {
+      const now = new Date();
+      document.getElementById("liveClock").textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById("liveDate").textContent = now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    // ================= RENDER: SCHEDULE =================
+    function renderScheduleScreen() {
+      const dayData = divisionITimetable[activeDay];
+      document.getElementById("currentViewingDayTitle").textContent = `${dayData.name} Schedule`;
+      document.getElementById("activeBatchPill").textContent = `Batch ${activeBatch}`;
+
+      document.querySelectorAll(".day-chip").forEach(btn => {
+        const d = parseInt(btn.getAttribute("data-day"));
+        if (d === activeDay) {
+          btn.className = "day-chip flex-1 py-2 px-2.5 rounded-xl text-center text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm flex flex-col items-center";
+        } else {
+          btn.className = "day-chip flex-1 py-2 px-2.5 rounded-xl text-center text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 flex flex-col items-center";
+        }
+      });
+
+      const container = document.getElementById("scheduleTimeline");
+      container.innerHTML = "";
+      let academicClassCount = 0;
+
+      dayData.classes.forEach(item => {
+        if (item.type === "Break") {
+          const bDiv = document.createElement("div");
+          bDiv.className = "py-2 px-3 bg-slate-100/80 rounded-xl text-xs text-slate-500 border border-dashed border-slate-200 flex items-center gap-2";
+          bDiv.innerHTML = `
+            <span class="font-mono text-[11px] font-semibold text-slate-400">${item.time}</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span class="font-semibold text-slate-600">${item.title}</span>
+          `;
+          container.appendChild(bDiv);
+          return;
+        }
+
+        academicClassCount++;
+        const card = document.createElement("div");
+        card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm transition-all hover:border-indigo-300";
+
+        if (item.isLabGroup) {
+          const batchInfo = item.batches[activeBatch];
+          const isFree = batchInfo.code === "STUDY";
+
+          card.innerHTML = `
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${isFree ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-800'}">
+                    ${isFree ? 'Self Study' : 'Practical Lab'}
+                  </span>
+                  <span class="text-[11px] font-mono font-medium text-slate-400">${item.time}</span>
+                </div>
+                <h3 class="text-sm font-extrabold text-slate-800">${batchInfo.code}: ${batchInfo.title}</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Location: <span class="font-bold text-slate-700">${batchInfo.room}</span> • Faculty: <span class="font-bold text-slate-700">${batchInfo.teacher}</span></p>
+              </div>
+              <span class="text-[10px] font-mono font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-1 rounded-lg">Batch ${activeBatch}</span>
+            </div>
+          `;
+        } else {
+          const colorStyles = {
+            blue: "border-l-4 border-blue-500",
+            emerald: "border-l-4 border-emerald-500",
+            amber: "border-l-4 border-amber-500",
+            purple: "border-l-4 border-purple-500",
+            orange: "border-l-4 border-orange-500"
+          }[item.color] || "border-l-4 border-indigo-500";
+
+          card.className += ` ${colorStyles}`;
+
+          card.innerHTML = `
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 uppercase font-mono">${item.type}</span>
+                  <span class="text-[11px] font-mono font-medium text-slate-400">${item.time}</span>
+                </div>
+                <h3 class="text-sm font-extrabold text-slate-800">${item.code}: ${item.title}</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Location: <span class="font-bold text-slate-700">${item.room}</span> • Faculty: <span class="font-bold text-slate-700">${item.teacher}</span></p>
+              </div>
+            </div>
+          `;
+        }
+
+        container.appendChild(card);
+      });
+
+      document.getElementById("slotCountBadge").textContent = `${academicClassCount} Sessions`;
+    }
+
+    // ================= RENDER: ATTENDANCE =================
+    function renderAttendanceScreen() {
+      const container = document.getElementById("attendanceCardsContainer");
+      container.innerHTML = "";
+
+      let totalAttended = 0;
+      let totalConducted = 0;
+
+      const subjectMeta = {
+        LADC: { name: "Linear Algebra & Diff Calc", color: "blue", credits: 4 },
+        PSP:  { name: "Problem Solving (C Prog)", color: "emerald", credits: 4 },
+        BEEE: { name: "Basic Electrical & Electronics", color: "amber", credits: 4 },
+        EES:  { name: "Environmental & Energy Studies", color: "purple", credits: 3 },
+        DTP:  { name: "Design Thinking & Prototyping", color: "orange", credits: 2 }
+      };
+
+      Object.keys(attendanceData).forEach(subKey => {
+        const data = attendanceData[subKey];
+        const meta = subjectMeta[subKey];
+        totalAttended += data.attended;
+        totalConducted += data.total;
+
+        const pct = data.total > 0 ? Math.round((data.attended / data.total) * 100) : 100;
+        const isSafe = pct >= 75;
+
+        let statusText = "";
+        if (data.total === 0) {
+          statusText = "No classes logged yet";
+        } else if (isSafe) {
+          const canMiss = Math.floor((4 * data.attended - 3 * data.total) / 3);
+          statusText = canMiss > 0 ? `Can miss ${canMiss} upcoming class${canMiss > 1 ? 'es' : ''}` : `On the edge (attend next class!)`;
+        } else {
+          const needed = Math.max(1, 3 * data.total - 4 * data.attended);
+          statusText = `Must attend next ${needed} class${needed > 1 ? 'es' : ''} to reach 75%`;
+        }
+
+        const card = document.createElement("div");
+        card.className = "bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-extrabold text-sm text-slate-800">${subKey}</span>
+                <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono">${meta.credits} Cred</span>
+              </div>
+              <p class="text-xs text-slate-500">${meta.name}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xl font-extrabold font-mono ${isSafe ? 'text-emerald-600' : 'text-red-500'}">${pct}%</span>
+              <div class="text-[10px] text-slate-400 font-mono">${data.attended} / ${data.total} Held</div>
+            </div>
+          </div>
+
+          <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-300 ${isSafe ? 'bg-emerald-500' : 'bg-red-500'}" style="width: ${Math.min(100, pct)}%"></div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-[11px] font-medium ${isSafe ? 'text-emerald-700' : 'text-red-600'}">${statusText}</span>
+            <div class="flex items-center gap-1.5">
+              <button data-sub="${subKey}" data-action="present" class="att-action-btn bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-200 transition-colors flex items-center gap-1">
+                +1 Present
+              </button>
+              <button data-sub="${subKey}" data-action="absent" class="att-action-btn bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-2.5 py-1 rounded-lg border border-red-200 transition-colors flex items-center gap-1">
+                +1 Miss
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      const overallPct = totalConducted > 0 ? Math.round((totalAttended / totalConducted) * 100) : 100;
+      document.getElementById("overallAttendancePct").textContent = `${overallPct}%`;
+      document.getElementById("overallAttendanceSub").textContent = `Total: ${totalAttended} of ${totalConducted} Sessions Attended`;
+      const overallStatus = document.getElementById("overallAttendanceStatus");
+      if (overallPct >= 75) {
+        overallStatus.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300";
+        overallStatus.textContent = "Safely Above 75%";
+      } else {
+        overallStatus.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-red-400/20 text-red-200";
+        overallStatus.textContent = "Attendance Warning (<75%)";
+      }
+
+      document.querySelectorAll(".att-action-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sub = btn.getAttribute("data-sub");
+          const act = btn.getAttribute("data-action");
+          if (act === "present") {
+            attendanceData[sub].attended++;
+            attendanceData[sub].total++;
+            showAppToast(`Marked Present in ${sub}`, "✅");
+          } else if (act === "absent") {
+            attendanceData[sub].total++;
+            showAppToast(`Marked Missed in ${sub}`, "⚠️");
+          }
+          saveAttendance();
+          renderAttendanceScreen();
+        });
+      });
+    }
+
+    // ================= RENDER: TASKS =================
+    function renderTasksScreen() {
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+
+      const completed = taskList.filter(t => t.completed).length;
+      const pending = taskList.length - completed;
+
+      document.getElementById("countAll").textContent = taskList.length;
+      document.getElementById("countPending").textContent = pending;
+      document.getElementById("countCompleted").textContent = completed;
+      document.getElementById("taskStats").textContent = `${completed} Done`;
+
+      let filtered = taskList;
+      if (taskFilter === "pending") filtered = taskList.filter(t => !t.completed);
+      if (taskFilter === "completed") filtered = taskList.filter(t => t.completed);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-xs text-slate-400">No tasks in this view. Great job!</div>`;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const item = document.createElement("div");
+        item.className = `flex items-center justify-between p-3 rounded-2xl border text-xs transition-all ${
+          task.completed ? 'bg-slate-50 border-slate-200 text-slate-400' : 'bg-white border-slate-200 text-slate-800 shadow-sm'
+        }`;
+
+        const left = document.createElement("div");
+        left.className = "flex items-center gap-2.5 flex-1 min-w-0 pr-2";
+
+        const chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.checked = task.completed;
+        chk.className = "w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer flex-shrink-0";
+        chk.addEventListener("change", () => {
+          task.completed = !task.completed;
+          saveTasks();
+          renderTasksScreen();
+          showAppToast(task.completed ? "Task checked off!" : "Task marked pending");
+        });
+
+        const span = document.createElement("span");
+        span.className = `truncate ${task.completed ? 'line-through text-slate-400' : 'font-semibold'}`;
+        span.textContent = task.title;
+
+        const badge = document.createElement("span");
+        badge.className = "text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-slate-100 text-slate-600 flex-shrink-0";
+        badge.textContent = task.subject;
+
+        left.appendChild(chk);
+        left.appendChild(span);
+        left.appendChild(badge);
+
+        const del = document.createElement("button");
+        del.innerHTML = "&times;";
+        del.className = "text-slate-400 hover:text-red-500 text-lg font-bold px-1 transition-colors flex-shrink-0";
+        del.addEventListener("click", () => {
+          taskList = taskList.filter(t => t.id !== task.id);
+          saveTasks();
+          renderTasksScreen();
+          showAppToast("Task removed", "🗑️");
+        });
+
+        item.appendChild(left);
+        item.appendChild(del);
+        container.appendChild(item);
+      });
+    }
+
+    // ================= RENDER: SYLLABUS =================
+    function renderSyllabusScreen() {
+      document.querySelectorAll(".syl-sub-btn").forEach(btn => {
+        const s = btn.getAttribute("data-sub");
+        if (s === activeSyllabusSub) {
+          btn.className = "syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white whitespace-nowrap shadow-sm";
+        } else {
+          btn.className = "syl-sub-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap";
+        }
+      });
+
+      const subData = syllabusDatabase[activeSyllabusSub];
+      const container = document.getElementById("syllabusContent");
+      container.innerHTML = `
+        <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-3 text-xs">
+          <div class="font-bold text-indigo-950 text-sm">${subData.name}</div>
+          <div class="text-indigo-700 font-mono text-[11px] mt-0.5">${subData.code} • ${subData.credits}</div>
+        </div>
+      `;
+
+      subData.units.forEach(u => {
+        const isChecked = !!syllabusChecklist[u.id];
+
+        const uCard = document.createElement("div");
+        uCard.className = `p-3 rounded-2xl border text-xs transition-all ${
+          isChecked ? 'bg-emerald-50/50 border-emerald-200' : 'bg-white border-slate-200'
+        }`;
+
+        uCard.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <input type="checkbox" id="chk_${u.id}" ${isChecked ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer mt-0.5 flex-shrink-0">
+            <div class="flex-1">
+              <label for="chk_${u.id}" class="font-bold text-slate-800 cursor-pointer block ${isChecked ? 'text-emerald-900' : ''}">${u.title}</label>
+              <p class="text-[11px] text-slate-500 mt-0.5 leading-relaxed">${u.desc}</p>
+            </div>
+          </div>
+        `;
+
+        uCard.querySelector("input").addEventListener("change", (e) => {
+          syllabusChecklist[u.id] = e.target.checked;
+          saveSyllabus();
+          renderSyllabusScreen();
+          showAppToast(e.target.checked ? "Unit marked completed!" : "Unit unchecked");
+        });
+
+        container.appendChild(uCard);
+      });
+
+      let totalAllUnits = 0;
+      let completedAllUnits = 0;
+      Object.keys(syllabusDatabase).forEach(k => {
+        syllabusDatabase[k].units.forEach(un => {
+          totalAllUnits++;
+          if (syllabusChecklist[un.id]) completedAllUnits++;
+        });
+      });
+      const overallCoveragePct = totalAllUnits > 0 ? Math.round((completedAllUnits / totalAllUnits) * 100) : 0;
+      document.getElementById("syllabusProgressBadge").textContent = `${overallCoveragePct}% Covered (${completedAllUnits}/${totalAllUnits})`;
+    }
+
+    // ================= TAB NAVIGATION =================
+    function switchTab(targetId) {
+      currentActiveTab = targetId;
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) targetEl.classList.remove("hidden");
+
+      document.querySelectorAll(".nav-item").forEach(btn => {
+        if (btn.getAttribute("data-target") === targetId) {
+          btn.className = "nav-item active flex flex-col items-center py-1 px-2 text-indigo-600 transition-colors";
+        } else {
+          btn.className = "nav-item flex flex-col items-center py-1 px-2 text-slate-400 hover:text-slate-600 transition-colors";
+        }
+      });
+
+      if (targetId === "tabSchedule") renderScheduleScreen();
+      if (targetId === "tabAttendance") renderAttendanceScreen();
+      if (targetId === "tabTasks") renderTasksScreen();
+      if (targetId === "tabSyllabus") renderSyllabusScreen();
+    }
+
+    // ================= INIT LISTENERS =================
+    window.addEventListener("DOMContentLoaded", () => {
+      initAppData();
+      refreshClock();
+      setInterval(refreshClock, 1000);
+
+      renderScheduleScreen();
+      renderAttendanceScreen();
+      renderTasksScreen();
+      renderSyllabusScreen();
+
+      const batchSelect = document.getElementById("batchSelect");
+      const batchButtons = document.querySelectorAll(".batch-btn");
+      const updateBatchUI = (b) => {
+        saveBatch(b);
+        batchSelect.value = b;
+        batchButtons.forEach(btn => {
+          if (btn.getAttribute("data-batch") === b) {
+            btn.className = "batch-btn px-2.5 py-1 rounded-md font-bold transition-all bg-white text-indigo-700 shadow-sm";
+          } else {
+            btn.className = "batch-btn px-2.5 py-1 rounded-md font-bold transition-all text-indigo-200 hover:text-white";
+          }
+        });
+        document.getElementById("profileBatchDisplay").textContent = `Batch ${b}`;
+        renderScheduleScreen();
+        showAppToast(`Switched to Batch ${b}`, "🏷️");
+      };
+
+      updateBatchUI(activeBatch);
+
+      batchButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          updateBatchUI(btn.getAttribute("data-batch"));
+        });
+      });
+
+      batchSelect.addEventListener("change", (e) => {
+        updateBatchUI(e.target.value);
+      });
+
+      document.querySelectorAll(".day-chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeDay = parseInt(btn.getAttribute("data-day"));
+          renderScheduleScreen();
+        });
+      });
+
+      document.querySelectorAll(".nav-item").forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchTab(btn.getAttribute("data-target"));
+        });
+      });
+
+      const taskForm = document.getElementById("taskForm");
+      taskForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const inp = document.getElementById("taskTitle");
+        const sub = document.getElementById("taskSubject");
+        const val = inp.value.trim();
+        if (!val) return;
+
+        taskList.unshift({
+          id: Date.now(),
+          title: val,
+          subject: sub.value,
+          completed: false
+        });
+        saveTasks();
+        renderTasksScreen();
+        inp.value = "";
+        showAppToast("New task logged!", "📝");
+      });
+
+      document.querySelectorAll(".task-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          taskFilter = btn.getAttribute("data-filter");
+          document.querySelectorAll(".task-filter-btn").forEach(b => {
+            b.className = (b.getAttribute("data-filter") === taskFilter)
+              ? "task-filter-btn px-3 py-1 rounded-lg font-bold bg-indigo-600 text-white"
+              : "task-filter-btn px-3 py-1 rounded-lg font-bold bg-slate-200 text-slate-700";
+          });
+          renderTasksScreen();
+        });
+      });
+
+      document.querySelectorAll(".syl-sub-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeSyllabusSub = btn.getAttribute("data-sub");
+          renderSyllabusScreen();
+        });
+      });
+
+      document.getElementById("resetAttendanceBtn").addEventListener("click", () => {
+        Object.keys(attendanceData).forEach(k => {
+          attendanceData[k] = { attended: 0, total: 0 };
+        });
+        saveAttendance();
+        renderAttendanceScreen();
+        showAppToast("Attendance counters reset", "🔄");
+      });
+
+      document.getElementById("seedPresetTasksBtn").addEventListener("click", () => {
+        taskList = [...defaultPresetTasks];
+        saveTasks();
+        renderTasksScreen();
+        showAppToast("Official lab tasks reloaded!", "📚");
+      });
+
+      document.getElementById("clearAllDataBtn").addEventListener("click", () => {
+        try {
+          localStorage.removeItem("div_i_tasks");
+          localStorage.removeItem("div_i_attendance");
+          localStorage.removeItem("div_i_syl_checks");
+          localStorage.removeItem("div_i_batch");
+        } catch (e) {}
+        initAppData();
+        renderScheduleScreen();
+        renderAttendanceScreen();
+        renderTasksScreen();
+        renderSyllabusScreen();
+        showAppToast("All data cleared & reset", "🧹");
+      });
+    });
+  </script>
+</body>
+</html>
